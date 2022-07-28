@@ -67,7 +67,7 @@
 								<a class="panel-block {(thing && thing.id === favorite.id) ? 'is-active' : ''}" data-id='{favorite.id}'
 									on:click="{() => thing = favorite}">
 									<span class="panel-icon">
-										<i class="fas fa-book" aria-hidden="true"></i>
+										<i class="fa-solid fa-book" aria-hidden="true"></i>
 									</span>
 									{favorite.name}
 								</a>
