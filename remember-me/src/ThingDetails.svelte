@@ -14,6 +14,7 @@
             .then(response => response.json())
             .then(data => {
                 thing.is_favorite = data.is_favorite;
+                thing.last_updated = data.last_updated;
             })
             .catch(console.log);
     };
