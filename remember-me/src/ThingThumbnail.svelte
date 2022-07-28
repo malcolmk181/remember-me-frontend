@@ -14,4 +14,4 @@
 	}
 </script>
 
-<span class="tag is-medium" data-id={id} on:click="{handleClick}">{name}</span>
+<span class="tag is-medium is-clickable" data-id={id} on:click="{handleClick}">{name}</span>

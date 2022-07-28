@@ -37,7 +37,7 @@
 <main>
 	<section class='section'>
 		<nav class="level">
-			<div class="level-item has-text-centered" on:click="{() => thing = null}">
+			<div class="level-item has-text-centered is-clickable" on:click="{() => thing = null}">
 				<h1 class="title">Remember Me!</h1>
 			</div>
 		</nav>
