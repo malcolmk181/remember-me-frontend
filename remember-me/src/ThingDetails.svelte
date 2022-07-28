@@ -1,6 +1,10 @@
 <script>
     export let thing;
 
+    let easyMDE;
+
+    import { afterUpdate, onMount } from "svelte"
+
     const toggleFavorite = () => {
         fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
             method: 'PATCH',
@@ -19,11 +23,20 @@
             .catch(console.log);
     };
 
+    onMount(() => {
+        easyMDE = new EasyMDE();
+        easyMDE.value(thing.content);
+    });
+
+    afterUpdate(() => {
+        easyMDE.value(thing.content);
+    });
+
 </script>
 
 <div class='content' data-id={thing.id}>
     <h1>{thing.name}</h1>
-    <p>{thing.content}</p>
+    <textarea id="thing-text-area"></textarea>
     {#if thing.image_url}
         <img src="{thing.image_url}" alt="{thing.name} image"/>
     {/if}

@@ -10,8 +10,6 @@
 	let thing;
 	let favorites;
 
-	const showThing = document.querySelector("#show-thing");
-
 	const setFavorites = () => {
 		favorites = things.filter(thing => thing.is_favorite);
 	};
@@ -84,7 +82,7 @@
 			<div id='show-thing'>
 				{#if thing}
 					<div class='box'>
-						<ThingDetails bind:thing={thing} />
+						<ThingDetails bind:thing={thing}/>
 						{#if thing.child_things.length > 0}
 							<h1 class='title is-4'>Children:</h1>
 							<div class='is-flex is-flex-direction-row is-flex-wrap-wrap'>
