@@ -85,6 +85,18 @@
 				{#if thing}
 					<div class='box'>
 						<ThingDetails bind:thing={thing} />
+						{#if thing.child_things.length > 0}
+							<h1 class='title is-4'>Children:</h1>
+							<div class='is-flex is-flex-direction-row is-flex-wrap-wrap'>
+								{#each thing.child_things as child}
+									<ThingThumbnail
+										name={child.name}
+										id={child.id}
+										on:message="{() => thing = child}"
+									/>
+								{/each}
+							</div>
+						{/if}
 					</div>
 				{/if}
 			</div>
