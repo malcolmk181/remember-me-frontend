@@ -1,39 +1,34 @@
 <script>
-    export let name;
-    export let id;
-    export let content;
-    export let image_url;
-    export let url;
-    export let is_favorite;
-    export let updated_at;
+    export let thing;
 
     const toggleFavorite = () => {
-        fetch(`https://remember-me-rails.herokuapp.com/things/${id}`, {
+        fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                is_favorite: !is_favorite
+                is_favorite: !thing.is_favorite
             })
         })
             .then(response => response.json())
             .then(data => {
-                is_favorite = data.is_favorite;
+                thing.is_favorite = data.is_favorite;
             })
+            .catch(console.log);
     };
 
 </script>
 
-<div class='content' data-id={id}>
-    <h1>{name}</h1>
-    <p>{content}</p>
-    {#if image_url}
-        <img src="{image_url}" alt="{name} image"/>
+<div class='content' data-id={thing.id}>
+    <h1>{thing.name}</h1>
+    <p>{thing.content}</p>
+    {#if thing.image_url}
+        <img src="{thing.image_url}" alt="{thing.name} image"/>
     {/if}
-    {#if url}
-        <a href="{url}" target="_blank">{url}</a>
+    {#if thing.url}
+        <a href="{thing.url}" target="_blank">{thing.url}</a>
     {/if}
-    <p>Last updated at {updated_at}</p>
-    <button data-favorite="{is_favorite}" class='button' on:click="{toggleFavorite}">{!!is_favorite ? 'Favorited' : 'Not favorited'}</button>
+    <p>Last updated at {thing.updated_at}</p>
+    <button data-favorite="{thing.is_favorite}" class='button' on:click="{toggleFavorite}">{!!thing.is_favorite ? 'Favorited' : 'Not favorited'}</button>
 </div>
