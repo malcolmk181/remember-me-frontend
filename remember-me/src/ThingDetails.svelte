@@ -19,6 +19,5 @@
         <a href="{url}" target="_blank">{url}</a>
     {/if}
     <p>Last updated at {updated_at}</p>
-    <button>{is_favorite ? 'Favorited' : 'Not favorited'}</button>
-
+    <button data-favorite="{is_favorite}">{!!is_favorite ? 'Favorited' : 'Not favorited'}</button>
 </div>
