@@ -1,6 +1,6 @@
 <script>
 	// build with 'npm run build'
-	// then cd into public, then do 'surge'
+	// then deploy with 'surge public'
 
 	import { onMount } from "svelte"
 	import ThingThumbnail from "./ThingThumbnail.svelte";
