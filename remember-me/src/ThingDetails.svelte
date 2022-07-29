@@ -164,3 +164,9 @@
         </div>
     {/if}
 </div>
+
+<style>
+	.is-flex {
+		gap: 1rem;
+	}
+</style>
