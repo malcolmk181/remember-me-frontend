@@ -92,7 +92,7 @@
 									<ThingThumbnail
 										name={child.name}
 										id={child.id}
-										on:message="{() => thing = child}"
+										on:message="{() => changeThing(child)}"
 									/>
 								{/each}
 							</div>
