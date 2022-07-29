@@ -71,7 +71,7 @@
 							<p>Loading things...</p>
 						{/if}
 					</div>
-					<div class='is-flex is-flex-direction-row is-flex-wrap-wrap mt-3'>
+					<div class='is-flex is-flex-direction-row is-flex-wrap-wrap mt-6'>
 						{#if things}
 							<span class="tag is-primary is-light is-medium is-clickable" on:click="{showNewThing}">Create new thing</span>
 						{/if}
