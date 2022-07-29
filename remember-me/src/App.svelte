@@ -5,6 +5,7 @@
 	import { onMount } from "svelte"
 	import ThingThumbnail from "./ThingThumbnail.svelte";
 	import ThingDetails from "./ThingDetails.svelte";
+	import Favorite from "./Favorite.svelte";
 
 	let things;
 	let thing;
@@ -23,6 +24,10 @@
 			});
 	};
 
+	const changeThing = (newThing) => {
+		thing = newThing;
+	};
+
 	$: getThings(thing);
 
 	onMount(getThings);
@@ -31,7 +36,7 @@
 <main>
 	<section class='section'>
 		<nav class="level">
-			<div class="level-item has-text-centered is-clickable" on:click="{() => thing = null}">
+			<div class="level-item has-text-centered is-clickable" on:click="{() => changeThing(null)}">
 				<h1 class="title">Remember Me!</h1>
 			</div>
 		</nav>
@@ -48,7 +53,7 @@
 								<ThingThumbnail
 									name={localThing.name}
 									id={localThing.id}
-									on:message="{() => thing = localThing}"
+									on:message="{() => changeThing(localThing)}"
 								/>
 							{/each}
 						{/if}
@@ -61,14 +66,11 @@
 						</p>
 						{#if favorites}
 							{#each favorites as favorite}
-								<!-- svelte-ignore a11y-missing-attribute -->
-								<a class="panel-block {(thing && thing.id === favorite.id) ? 'is-active' : ''}" data-id='{favorite.id}'
-									on:click="{() => thing = favorite}">
-									<span class="panel-icon">
-										<i class="fa-solid fa-book" aria-hidden="true"></i>
-									</span>
-									{favorite.name}
-								</a>
+								<Favorite
+									thing={thing}
+									favorite={favorite}
+									on:message="{() => changeThing(favorite)}"
+								/>
 							{/each}
 						{/if}
 					  </article>
