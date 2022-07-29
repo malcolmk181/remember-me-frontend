@@ -84,19 +84,10 @@
 			<div id='show-thing'>
 				{#if thing}
 					<div class='box'>
-						<ThingDetails bind:thing={thing}/>
-						{#if thing.child_things.length > 0}
-							<h1 class='title is-4'>Children:</h1>
-							<div class='is-flex is-flex-direction-row is-flex-wrap-wrap'>
-								{#each thing.child_things as child}
-									<ThingThumbnail
-										name={child.name}
-										id={child.id}
-										on:message="{() => changeThing(child)}"
-									/>
-								{/each}
-							</div>
-						{/if}
+						<ThingDetails
+							bind:thing={thing}
+							on:message={(message) => changeThing(things.find(thing => thing.id === message.detail.id))}
+						/>
 					</div>
 				{/if}
 			</div>

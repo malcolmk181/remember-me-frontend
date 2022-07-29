@@ -3,7 +3,8 @@
 
     let easyMDE;
 
-    import { afterUpdate, onMount } from "svelte"
+    import { afterUpdate, onMount } from "svelte";
+    import ThingThumbnail from "./ThingThumbnail.svelte";
 
     const toggleFavorite = () => {
         fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
@@ -45,4 +46,17 @@
     {/if}
     <p>Last updated at {thing.updated_at}</p>
     <button data-favorite="{thing.is_favorite}" class='button' on:click="{toggleFavorite}">{!!thing.is_favorite ? 'Favorited' : 'Not favorited'}</button>
+
+    {#if thing.child_things.length > 0}
+        <h1 class='title is-4'>Children:</h1>
+        <div class='is-flex is-flex-direction-row is-flex-wrap-wrap'>
+            {#each thing.child_things as child}
+                <ThingThumbnail
+                    name={child.name}
+                    id={child.id}
+                    on:message
+                />
+            {/each}
+        </div>
+    {/if}
 </div>
