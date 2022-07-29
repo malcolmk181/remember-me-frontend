@@ -106,6 +106,7 @@
 					<div class='box'>
 						<ThingDetails
 							bind:thing={thing}
+							things={things}
 							on:message={(message) => changeThing(things.find(thing => thing.id === message.detail.id))}
 						/>
 					</div>

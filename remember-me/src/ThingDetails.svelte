@@ -1,11 +1,13 @@
 <script>
     export let thing;
+    export let things;
 
     let easyMDE;
     let nameState = 'viewing';
 
     import { afterUpdate, onMount } from "svelte";
     import ThingThumbnail from "./ThingThumbnail.svelte";
+    import ChildCreate from "./ChildCreate.svelte";
 
     const toggleFavorite = async () => {
         fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
@@ -106,6 +108,21 @@
             .catch(console.log);
     };
 
+    const toggleCreateChild = () => {
+        const childCreate = document.querySelector('#child-create');
+        if (childCreate.classList.contains('is-hidden')) {
+            childCreate.classList.remove('is-hidden');
+        } else {
+            childCreate.classList.add('is-hidden');
+        }
+    };
+
+    const handleAddedChild = (event) => {
+        toggleCreateChild();
+        thing.child_things.push(things.find(thing => thing.id === event.detail.id));
+        thing = thing;
+    };
+
     onMount(() => {
         easyMDE = new EasyMDE({ previewImagesInEditor: true, spellChecker: false });
         easyMDE.value(thing.content);
@@ -176,7 +193,7 @@
         </div>
     </nav>
 
-    {#if thing.child_things.length > 0}
+    {#if thing.id}
         <h1 class='title is-4'>Children:</h1>
         <div class='is-flex is-flex-direction-row is-flex-wrap-wrap'>
             {#each thing.child_things as child}
@@ -186,6 +203,15 @@
                     on:message
                 />
             {/each}
+            <span class="tag is-medium is-clickable is-warning is-light" on:click="{toggleCreateChild}">New child</span>
+        </div>
+
+        <div id='child-create' class='is-hidden'>
+            <ChildCreate
+                things={things}
+                thing={thing}
+                on:done="{handleAddedChild}"
+            />
         </div>
     {/if}
 </div>
@@ -194,4 +220,8 @@
 	.is-flex {
 		gap: 1rem;
 	}
+
+    .is-hidden {
+        display: none;
+    }
 </style>
