@@ -26,42 +26,61 @@
     };
 
     const saveName = async (newName) => {
-        fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name: newName
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                thing.name = data.name;
-                thing.last_updated = data.last_updated;
-            })
-            .catch(console.log);
-    };
-
-    const saveContent = async () => {
-        let newValue = easyMDE.value();
-        if (newValue !== thing.content) {
+        if (thing.id) {
             fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    content: newValue
+                    name: newName
                 })
             })
                 .then(response => response.json())
                 .then(data => {
-                    thing.content = data.content;
+                    thing.name = data.name;
                     thing.last_updated = data.last_updated;
                 })
                 .catch(console.log);
         }
+    };
+
+    const saveContent = async () => {
+        let newValue = easyMDE.value();
+        if (thing.id) {
+            if (newValue !== thing.content) {
+                fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        content: newValue
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        thing.content = data.content;
+                        thing.last_updated = data.last_updated;
+                    })
+                    .catch(console.log);
+            }
+        } else {
+            fetch('https://remember-me-rails.herokuapp.com/things', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: document.querySelector('#thing-name').innerHTML,
+                    content: newValue
+                })
+            })
+                .then(response => response.json())
+                .then(data => thing = data)
+                .catch(console.log);
+        }
+        
     };
 
     const toggleName = () => {
@@ -130,10 +149,13 @@
     {#if thing.url}
         <a href="{thing.url}" target="_blank">{thing.url}</a>
     {/if}
+    {#if thing.updated_at}
     <p>Last updated at {thing.updated_at}</p>
+    {/if}
     
     <nav class="level">
         <div class="level-left">
+            {#if thing.id}
             <div class="level-item">
                 <button 
                     data-favorite="{thing.is_favorite}"
@@ -142,12 +164,15 @@
                         {!!thing.is_favorite ? '❤️ Favorited' : 'Not favorited'}
                 </button>
             </div>
+            {/if}
             <div class="level-item">
                 <button class='button' on:click|preventDefault="{saveContent}">Save content</button>
             </div>
-            <div class="level-item">
-                <button class='button is-danger is-light' on:click|preventDefault="{deleteThing}">Delete this thing</button>
-            </div>
+            {#if thing.id}
+                <div class="level-item">
+                    <button class='button is-danger is-light' on:click|preventDefault="{deleteThing}">Delete this thing</button>
+                </div>
+            {/if}
         </div>
     </nav>
 

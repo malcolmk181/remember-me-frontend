@@ -28,6 +28,17 @@
 		thing = newThing;
 	};
 
+	const showNewThing = () => {
+		changeThing(thing = {
+			id: null,
+			name: '',
+			content: '',
+			is_favorite: false,
+			last_updated: null,
+			child_things: []
+		});
+	};
+
 	$: getThings(thing);
 
 	onMount(getThings);
@@ -56,6 +67,13 @@
 									on:message="{() => changeThing(localThing)}"
 								/>
 							{/each}
+						{:else}
+							<p>Loading things...</p>
+						{/if}
+					</div>
+					<div class='is-flex is-flex-direction-row is-flex-wrap-wrap mt-3'>
+						{#if things}
+							<span class="tag is-primary is-light is-medium is-clickable" on:click="{showNewThing}">Create new thing</span>
 						{/if}
 					</div>
 				</div>
