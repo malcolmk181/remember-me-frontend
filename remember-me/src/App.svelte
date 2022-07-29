@@ -75,7 +75,7 @@
 						{:else}
 							<p class="panel-block"><em> No favorites yet. </em></p>
 						{/if}
-					  </article>
+					</article>
 				</div>
 			</div>
 		</div>

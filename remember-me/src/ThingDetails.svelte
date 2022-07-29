@@ -6,7 +6,7 @@
     import { afterUpdate, onMount } from "svelte";
     import ThingThumbnail from "./ThingThumbnail.svelte";
 
-    const toggleFavorite = () => {
+    const toggleFavorite = async () => {
         fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
             method: 'PATCH',
             headers: {
@@ -24,6 +24,27 @@
             .catch(console.log);
     };
 
+    const saveContent = async () => {
+        let newValue = easyMDE.value();
+        if (newValue !== thing.content) {
+            fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    content: newValue
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    thing.content = data.content;
+                    thing.last_updated = data.last_updated;
+                })
+                .catch(console.log);
+        }
+    };
+
     onMount(() => {
         easyMDE = new EasyMDE();
         easyMDE.value(thing.content);
@@ -38,6 +59,7 @@
 <div class='content' data-id={thing.id}>
     <h1>{thing.name}</h1>
     <textarea id="thing-text-area"></textarea>
+    <button class='button' on:click|preventDefault="{saveContent}">Save</button>
     {#if thing.image_url}
         <img src="{thing.image_url}" alt="{thing.name} image"/>
     {/if}
