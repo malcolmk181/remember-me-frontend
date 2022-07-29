@@ -73,8 +73,8 @@
         } else {
             nameState = 'viewing';
             thingName.contentEditable = false;
-            if (newName !== thing.name) {
-                saveName(newName);
+            if (thingName.innerHTML !== thing.name) {
+                saveName(thingName.innerHTML);
             }
         }
     };
