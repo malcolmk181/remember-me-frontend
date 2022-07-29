@@ -2,6 +2,7 @@
     export let thing;
 
     let easyMDE;
+    let nameState = 'viewing';
 
     import { afterUpdate, onMount } from "svelte";
     import ThingThumbnail from "./ThingThumbnail.svelte";
@@ -19,6 +20,24 @@
             .then(response => response.json())
             .then(data => {
                 thing.is_favorite = data.is_favorite;
+                thing.last_updated = data.last_updated;
+            })
+            .catch(console.log);
+    };
+
+    const saveName = async (newName) => {
+        fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: newName
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                thing.name = data.name;
                 thing.last_updated = data.last_updated;
             })
             .catch(console.log);
@@ -45,6 +64,19 @@
         }
     };
 
+    const toggleName = () => {
+        const thingName = document.querySelector('#thing-name');
+        if (nameState === 'viewing') {
+            nameState = 'editing';
+            thingName.contentEditable = true;
+            thingName.focus();
+        } else {
+            nameState = 'viewing';
+            thingName.contentEditable = false;
+            saveName(thingName.innerText);
+        }
+    };
+
     onMount(() => {
         easyMDE = new EasyMDE({ previewImagesInEditor: true });
         easyMDE.value(thing.content);
@@ -62,7 +94,24 @@
 </script>
 
 <div class='content' data-id={thing.id}>
-    <h1>{thing.name}</h1>
+    <nav class='level'>
+        <div class='level-left'>
+            <div class='level-item'>
+                <h1 class='title' id="thing-name" data-name='{thing.name}' contenteditable="false">{thing.name}</h1>
+            </div>
+        </div>
+        <div class='level-right'>
+            <div class='level-item'>
+                <button
+                    class='button'
+                    data-state='{nameState}'
+                    id='edit-thing-name'
+                    on:click|preventDefault="{toggleName}">
+                        {nameState === 'viewing' ? 'Edit name' : 'Save name'}
+                </button>
+            </div>
+        </div>
+    </nav>
     <textarea id="thing-text-area"></textarea>
     
     {#if thing.image_url}
@@ -85,7 +134,7 @@
                 </button>
             </div>
             <div class="level-item">
-                <button class='button' on:click|preventDefault="{saveContent}">Save</button>
+                <button class='button' on:click|preventDefault="{saveContent}">Save content</button>
             </div>
         </div>
     </nav>
