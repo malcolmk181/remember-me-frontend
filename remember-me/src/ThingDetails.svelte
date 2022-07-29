@@ -73,8 +73,14 @@
         } else {
             nameState = 'viewing';
             thingName.contentEditable = false;
-            saveName(thingName.innerText);
+            if (newName !== thing.name) {
+                saveName(newName);
+            }
         }
+    };
+
+    const deleteThing = () => {
+
     };
 
     onMount(() => {
@@ -123,7 +129,6 @@
     <p>Last updated at {thing.updated_at}</p>
     
     <nav class="level">
-        <!-- Left side -->
         <div class="level-left">
             <div class="level-item">
                 <button 
@@ -135,6 +140,9 @@
             </div>
             <div class="level-item">
                 <button class='button' on:click|preventDefault="{saveContent}">Save content</button>
+            </div>
+            <div class="level-item">
+                <button class='button is-danger is-light' on:click|preventDefault="{deleteThing}">Delete this thing</button>
             </div>
         </div>
     </nav>
