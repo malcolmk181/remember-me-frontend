@@ -46,12 +46,17 @@
     };
 
     onMount(() => {
-        easyMDE = new EasyMDE();
+        easyMDE = new EasyMDE({ previewImagesInEditor: true });
         easyMDE.value(thing.content);
+        easyMDE.togglePreview();
     });
 
     afterUpdate(() => {
         easyMDE.value(thing.content);
+
+        if (!easyMDE.isPreviewActive()) {
+            easyMDE.togglePreview();
+        }
     });
 
 </script>
