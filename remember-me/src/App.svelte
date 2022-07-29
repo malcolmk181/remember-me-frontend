@@ -72,6 +72,8 @@
 									on:message="{() => changeThing(favorite)}"
 								/>
 							{/each}
+						{:else}
+							<p class="panel-block"><em> No favorites yet. </em></p>
 						{/if}
 					  </article>
 				</div>
