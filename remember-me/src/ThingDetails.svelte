@@ -79,8 +79,12 @@
         }
     };
 
-    const deleteThing = () => {
-
+    const deleteThing = async () => {
+        fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
+            method: 'DELETE'
+        })
+            .then( () => thing = null )
+            .catch(console.log);
     };
 
     onMount(() => {
