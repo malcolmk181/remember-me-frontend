@@ -59,7 +59,7 @@
 <div class='content' data-id={thing.id}>
     <h1>{thing.name}</h1>
     <textarea id="thing-text-area"></textarea>
-    <button class='button' on:click|preventDefault="{saveContent}">Save</button>
+    
     {#if thing.image_url}
         <img src="{thing.image_url}" alt="{thing.name} image"/>
     {/if}
@@ -67,7 +67,23 @@
         <a href="{thing.url}" target="_blank">{thing.url}</a>
     {/if}
     <p>Last updated at {thing.updated_at}</p>
-    <button data-favorite="{thing.is_favorite}" class='button' on:click="{toggleFavorite}">{!!thing.is_favorite ? 'Favorited' : 'Not favorited'}</button>
+    
+    <nav class="level">
+        <!-- Left side -->
+        <div class="level-left">
+            <div class="level-item">
+                <button 
+                    data-favorite="{thing.is_favorite}"
+                    class='button'
+                    on:click="{toggleFavorite}">
+                        {!!thing.is_favorite ? '❤️ Favorited' : 'Not favorited'}
+                </button>
+            </div>
+            <div class="level-item">
+                <button class='button' on:click|preventDefault="{saveContent}">Save</button>
+            </div>
+        </div>
+    </nav>
 
     {#if thing.child_things.length > 0}
         <h1 class='title is-4'>Children:</h1>
