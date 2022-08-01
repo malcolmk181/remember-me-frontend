@@ -18,5 +18,5 @@
     <span class="panel-icon">
         <i class="fa-solid fa-book" aria-hidden="true"></i>
     </span>
-    {favorite.name}
+    {favorite.attributes.name}
 </a>

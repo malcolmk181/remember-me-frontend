@@ -12,30 +12,48 @@
 	let favorites;
 
 	const setFavorites = () => {
-		favorites = things.filter(thing => thing.is_favorite);
+		favorites = things.filter(thing => thing.attributes.is_favorite);
 	};
 
 	const getThings = async () => {
 		return fetch('https://remember-me-rails.herokuapp.com/things')
 			.then(response => response.json())
 			.then(data => {
-				things = data;
+				things = data.data;
 				setFavorites();
 			});
 	};
 
 	const changeThing = (newThing) => {
-		thing = newThing;
+		if (newThing && newThing.id) {
+			fetch(`https://remember-me-rails.herokuapp.com/things/${newThing.id}`)
+				.then(response => response.json())
+				.then(data => {
+					console.log(data);
+					thing = data;
+				});
+		} else {
+			thing = newThing;
+		}
 	};
 
 	const showNewThing = () => {
-		changeThing(thing = {
-			id: null,
-			name: '',
-			content: '',
-			is_favorite: false,
-			last_updated: null,
-			child_things: []
+		changeThing({
+			data: {
+				id: null,
+				type: "things",
+				attributes: {
+					name: '',
+					content: '',
+					is_favorite: false,
+					updated_at: null
+				},
+				relationships: {
+					child_things: {
+						data: []
+					}
+				}
+			}
 		});
 	};
 
@@ -62,7 +80,7 @@
 						{#if things}
 							{#each things as localThing}
 								<ThingThumbnail
-									name={localThing.name}
+									name={localThing.attributes.name}
 									id={localThing.id}
 									on:message="{() => changeThing(localThing)}"
 								/>

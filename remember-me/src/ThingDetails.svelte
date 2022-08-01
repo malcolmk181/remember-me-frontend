@@ -16,13 +16,13 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                is_favorite: !thing.is_favorite
+                is_favorite: !thing.data.attributes.is_favorite
             })
         })
             .then(response => response.json())
             .then(data => {
-                thing.is_favorite = data.is_favorite;
-                thing.last_updated = data.last_updated;
+                thing.data.attributes.is_favorite = data.data.attributes.is_favorite;
+                thing.data.attributes.updated_at = data.data.attributes.last_updated;
             })
             .catch(console.log);
     };
@@ -40,8 +40,8 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    thing.name = data.name;
-                    thing.last_updated = data.last_updated;
+                    thing.data.attributes.name = data.data.attributes.name;
+                    thing.data.attributes.updated_at = data.data.attributes.updated_at;
                 })
                 .catch(console.log);
         }
@@ -50,7 +50,7 @@
     const saveContent = async () => {
         let newValue = easyMDE.value();
         if (thing.id) {
-            if (newValue !== thing.content) {
+            if (newValue !== thing.data.attributes.content) {
                 fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
                     method: 'PATCH',
                     headers: {
@@ -62,8 +62,8 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        thing.content = data.content;
-                        thing.last_updated = data.last_updated;
+                        thing.data.attributes.content = data.data.attributes.content;
+                        thing.data.attributes.updated_at = data.data.attributes.updated_at;
                     })
                     .catch(console.log);
             }
@@ -94,7 +94,7 @@
         } else {
             nameState = 'viewing';
             thingName.contentEditable = false;
-            if (thingName.innerHTML !== thing.name) {
+            if (thingName.innerHTML !== thing.data.attributes.name) {
                 saveName(thingName.innerHTML);
             }
         }
@@ -119,18 +119,23 @@
 
     const handleAddedChild = (event) => {
         toggleCreateChild();
-        thing.child_things.push(things.find(thing => thing.id === event.detail.id));
+
+        if (!thing.included) {
+            thing.included = [];
+        }
+
+        thing.included.push(things.find(thing => thing.id === event.detail.id));
         thing = thing;
     };
 
     onMount(() => {
         easyMDE = new EasyMDE({ previewImagesInEditor: true, spellChecker: false });
-        easyMDE.value(thing.content);
+        easyMDE.value(thing.data.attributes.content);
         easyMDE.togglePreview();
     });
 
     afterUpdate(() => {
-        easyMDE.value(thing.content);
+        easyMDE.value(thing.data.attributes.content);
 
         if (!easyMDE.isPreviewActive()) {
             easyMDE.togglePreview();
@@ -143,7 +148,7 @@
     <nav class='level'>
         <div class='level-left'>
             <div class='level-item'>
-                <h1 class='title' id="thing-name" data-name='{thing.name}' contenteditable="false">{thing.name}</h1>
+                <h1 class='title' id="thing-name" data-name='{thing.data.attributes.name}' contenteditable="false">{thing.data.attributes.name}</h1>
             </div>
         </div>
         <div class='level-right'>
@@ -159,15 +164,8 @@
         </div>
     </nav>
     <textarea id="thing-text-area"></textarea>
-    
-    {#if thing.image_url}
-        <img src="{thing.image_url}" alt="{thing.name} image"/>
-    {/if}
-    {#if thing.url}
-        <a href="{thing.url}" target="_blank">{thing.url}</a>
-    {/if}
-    {#if thing.updated_at}
-    <p>Last updated at {thing.updated_at}</p>
+    {#if thing.data.attributes.updated_at}
+    <p>Last updated at {thing.data.attributes.updated_at}</p>
     {/if}
     
     <nav class="level">
@@ -175,10 +173,10 @@
             {#if thing.id}
             <div class="level-item">
                 <button 
-                    data-favorite="{thing.is_favorite}"
+                    data-favorite="{thing.data.attributes.is_favorite}"
                     class='button'
                     on:click="{toggleFavorite}">
-                        {!!thing.is_favorite ? '❤️ Favorited' : 'Not favorited'}
+                        {!!thing.data.attributes.is_favorite ? '❤️ Favorited' : 'Not favorited'}
                 </button>
             </div>
             {/if}
@@ -196,13 +194,15 @@
     {#if thing.id}
         <h1 class='title is-4'>Children:</h1>
         <div class='is-flex is-flex-direction-row is-flex-wrap-wrap'>
-            {#each thing.child_things as child}
-                <ThingThumbnail
-                    name={child.name}
-                    id={child.id}
-                    on:message
-                />
-            {/each}
+            {#if thing.included}
+                {#each thing.included as child}
+                    <ThingThumbnail
+                        name={child.attributes.name}
+                        id={child.id}
+                        on:message
+                    />
+                {/each}
+            {/if}
             <span class="tag is-medium is-clickable is-warning is-light" on:click="{toggleCreateChild}">New child</span>
         </div>
 

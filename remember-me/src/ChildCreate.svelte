@@ -6,7 +6,7 @@
 
 	const dispatch = createEventDispatcher();
 
-    let currentChildrenIds = thing.child_things.map(child => child.id);
+    let currentChildrenIds = thing.included.map(child => child.id);
 
     let selectableThings = things.filter(candidate => {
         return thing.id !== candidate.id && currentChildrenIds.includes(candidate.id) === false;
@@ -44,7 +44,7 @@
             <div class="select">
                 <select id='child-select'>
                     {#each selectableThings as localThing}
-                        <option value={localThing.id}>{localThing.name}</option>
+                        <option value={localThing.id}>{localThing.attributes.name}</option>
                     {/each}
                 </select>
             </div>
