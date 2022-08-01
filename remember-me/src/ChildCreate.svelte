@@ -2,15 +2,17 @@
     export let things;
     export let thing;
 
+    let currentChildrenIds, selectableThings;
+
     import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
-    let currentChildrenIds = thing.included.map(child => child.id);
+    $: currentChildrenIds = thing.included ? thing.included.map(child => child.id) : [];
 
-    let selectableThings = things.filter(candidate => {
-        return thing.id !== candidate.id && currentChildrenIds.includes(candidate.id) === false;
-    })
+    $: selectableThings = things.filter(candidate => {
+        return thing.data.id !== candidate.id && currentChildrenIds.includes(candidate.id) === false;
+    });
 
     const saveChild = async () => {
         const childId = parseInt(document.querySelector('#child-select').value);
@@ -22,7 +24,7 @@
             },
             body: JSON.stringify({
                 child_thing_id: childId,
-                parent_thing_id: thing.id
+                parent_thing_id: thing.data.id
             })
         })
             .then(response => response.json())

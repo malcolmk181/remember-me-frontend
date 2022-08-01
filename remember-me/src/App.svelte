@@ -29,7 +29,6 @@
 			fetch(`https://remember-me-rails.herokuapp.com/things/${newThing.id}`)
 				.then(response => response.json())
 				.then(data => {
-					console.log(data);
 					thing = data;
 				});
 		} else {

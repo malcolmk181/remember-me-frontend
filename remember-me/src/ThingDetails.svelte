@@ -10,7 +10,7 @@
     import ChildCreate from "./ChildCreate.svelte";
 
     const toggleFavorite = async () => {
-        fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
+        fetch(`https://remember-me-rails.herokuapp.com/things/${thing.data.id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
@@ -28,8 +28,8 @@
     };
 
     const saveName = async (newName) => {
-        if (thing.id) {
-            fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
+        if (thing.data.id) {
+            fetch(`https://remember-me-rails.herokuapp.com/things/${thing.data.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
@@ -49,9 +49,9 @@
 
     const saveContent = async () => {
         let newValue = easyMDE.value();
-        if (thing.id) {
+        if (thing.data.id) {
             if (newValue !== thing.data.attributes.content) {
-                fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
+                fetch(`https://remember-me-rails.herokuapp.com/things/${thing.data.id}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json'
@@ -101,7 +101,7 @@
     };
 
     const deleteThing = async () => {
-        fetch(`https://remember-me-rails.herokuapp.com/things/${thing.id}`, {
+        fetch(`https://remember-me-rails.herokuapp.com/things/${thing.data.id}`, {
             method: 'DELETE'
         })
             .then( () => thing = null )
@@ -140,11 +140,13 @@
         if (!easyMDE.isPreviewActive()) {
             easyMDE.togglePreview();
         }
+
+        document.querySelector('#thing-name').innerHTML = thing.data.attributes.name ? thing.data.attributes.name : "";
     });
 
 </script>
 
-<div class='content' data-id={thing.id}>
+<div class='content' data-id={thing.data.id}>
     <nav class='level'>
         <div class='level-left'>
             <div class='level-item'>
@@ -165,25 +167,25 @@
     </nav>
     <textarea id="thing-text-area"></textarea>
     {#if thing.data.attributes.updated_at}
-    <p>Last updated at {thing.data.attributes.updated_at}</p>
+        <p>Last updated at {thing.data.attributes.updated_at}</p>
     {/if}
     
     <nav class="level">
         <div class="level-left">
-            {#if thing.id}
-            <div class="level-item">
-                <button 
-                    data-favorite="{thing.data.attributes.is_favorite}"
-                    class='button'
-                    on:click="{toggleFavorite}">
-                        {!!thing.data.attributes.is_favorite ? '❤️ Favorited' : 'Not favorited'}
-                </button>
-            </div>
+            {#if thing.data.id}
+                <div class="level-item">
+                    <button 
+                        data-favorite="{thing.data.attributes.is_favorite}"
+                        class='button'
+                        on:click="{toggleFavorite}">
+                            {!!thing.data.attributes.is_favorite ? '❤️ Favorited' : 'Not favorited'}
+                    </button>
+                </div>
             {/if}
             <div class="level-item">
                 <button class='button' on:click|preventDefault="{saveContent}">Save content</button>
             </div>
-            {#if thing.id}
+            {#if thing.data.id}
                 <div class="level-item">
                     <button class='button is-danger is-light' on:click|preventDefault="{deleteThing}">Delete this thing</button>
                 </div>
@@ -191,7 +193,7 @@
         </div>
     </nav>
 
-    {#if thing.id}
+    {#if thing.data.id}
         <h1 class='title is-4'>Children:</h1>
         <div class='is-flex is-flex-direction-row is-flex-wrap-wrap'>
             {#if thing.included}
