@@ -11,6 +11,8 @@
 	let thing;
 	let favorites;
 
+	let backStack = [];
+
 	const setFavorites = () => {
 		favorites = things.filter(thing => thing.attributes.is_favorite);
 	};
@@ -25,13 +27,26 @@
 	};
 
 	const changeThing = (newThing) => {
+		if (newThing === 'back') {
+			newThing = {
+				id: backStack.pop(),
+				goingBack: true
+			};
+			backStack = backStack;
+		}
 		if (newThing && newThing.id) {
+			if (!newThing.goingBack && thing && thing.data.id) {
+				backStack.push(thing.data.id);
+				backStack = backStack;
+			}
+
 			fetch(`https://remember-me-rails.herokuapp.com/things/${newThing.id}`)
 				.then(response => response.json())
 				.then(data => {
 					thing = data;
 				});
 		} else {
+			backStack = [];
 			thing = newThing;
 		}
 	};
@@ -119,6 +134,11 @@
 	<section class='section'>
 		<div class='container'>
 			<div id='show-thing'>
+				{#if backStack.length > 0}
+					<div class='is-flex is-flex-direction-row is-flex-wrap-wrap'>
+						<span class="tag is-primary is-light is-medium is-clickable" on:click="{() => changeThing('back')}">Back</span>
+					</div>
+				{/if}
 				{#if thing}
 					<div class='box'>
 						<ThingDetails
