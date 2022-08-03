@@ -135,8 +135,8 @@
 		<div class='container'>
 			<div id='show-thing'>
 				{#if backStack.length > 0}
-					<div class='is-flex is-flex-direction-row is-flex-wrap-wrap'>
-						<span class="tag is-primary is-light is-medium is-clickable" on:click="{() => changeThing('back')}">Back</span>
+					<div class='is-flex is-flex-direction-row mb-3'>
+						<span class="tag is-info is-light is-medium is-clickable" on:click="{() => changeThing('back')}">← Back</span>
 					</div>
 				{/if}
 				{#if thing}
