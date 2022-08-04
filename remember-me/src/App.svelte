@@ -70,8 +70,8 @@
 				id: null,
 				type: "things",
 				attributes: {
-					name: '',
-					content: '',
+					name: 'New thing',
+					content: 'Write your content in markdown here!',
 					is_favorite: false,
 					updated_at: null
 				},

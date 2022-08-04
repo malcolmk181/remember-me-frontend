@@ -276,5 +276,6 @@
 
     .is-editable {
         border: 1px solid #ccc;
+        font-style: italic;
     }
 </style>
