@@ -128,6 +128,31 @@
         thing = thing;
     };
 
+    const deleteChild = async (message) => {
+        const childId = parseInt(message.detail.id);
+        
+        fetch(`https://remember-me-rails.herokuapp.com/thing_relationships`)
+            .then( (resp) => resp.json() )
+            .then( (data) => {
+
+                const thingRelationships = data.data;
+                const relationship = thingRelationships.find(itm => parseInt(itm.attributes.child_thing_id) === childId && parseInt(itm.attributes.parent_thing_id) === parseInt(thing.data.id));
+
+
+                if (relationship) {
+                    fetch(`https://remember-me-rails.herokuapp.com/thing_relationships/${relationship.id}`, {
+                        method: 'DELETE'
+                    })
+                        .then( () => {
+                            thing.included = thing.included.filter(itm => parseInt(itm.id) !== childId);
+                            thing = thing;
+                        } )
+                        .catch(console.log);
+                }
+            } )
+            .catch(console.log);
+    };
+
     onMount(() => {
         easyMDE = new EasyMDE({ previewImagesInEditor: true, spellChecker: false });
         easyMDE.value(thing.data.attributes.content);
@@ -201,7 +226,9 @@
                     <ThingThumbnail
                         name={child.attributes.name}
                         id={child.id}
+                        deletable={true}
                         on:message
+                        on:delete={deleteChild}
                     />
                 {/each}
             {/if}
