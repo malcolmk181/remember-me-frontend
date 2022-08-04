@@ -3,7 +3,6 @@
     export let things;
 
     let easyMDE;
-    let nameState = 'viewing';
 
     import { afterUpdate, onMount } from "svelte";
     import ThingThumbnail from "./ThingThumbnail.svelte";
@@ -24,99 +23,79 @@
             .then(data => {
                 // Update the attributes of thing from the backend response
                 thing.data.attributes.is_favorite = data.data.attributes.is_favorite;
-                thing.data.attributes.updated_at = data.data.attributes.last_updated;
+                thing.data.attributes.updated_at = data.data.attributes.updated_at;
             })
             .catch(console.log);
     };
 
-    // Given a new name, update the name of thing in the backend
-    const saveName = async (newName) => {
-        if (thing.data.id) {
-            fetch(`https://remember-me-rails.herokuapp.com/things/${thing.data.id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: newName
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Update thing with the backend response
-                    thing.data.attributes.name = data.data.attributes.name;
-                    thing.data.attributes.updated_at = data.data.attributes.updated_at;
-                })
-                .catch(console.log);
-        }
-    };
+    // Save the contents of the thingDetails fields into the backend
+    const saveThing = async () => {
+        // grab the name and content
+        const thingName = document.querySelector('#thing-name');
+        const thingContent = easyMDE.value();
 
-    // Save the content of the markdown editor as the content of thing in the backend
-    const saveContent = async () => {
-        let newValue = easyMDE.value();
-        // if this is an existing thing, update it, otherwise create it
+        // check to see if this is a new thing or an existing thing
         if (thing.data.id) {
-            // Check that content has actually changed before sending a request to the backend
-            if (newValue !== thing.data.attributes.content) {
+            // this is an existing thing, check to see if content has changed
+            let body = {};
+
+            // check that the name has changed
+            if (thingName.innerHTML !== thing.data.attributes.name) {
+                body.name = thingName.innerHTML;
+            }
+
+            // check that the content has changed
+            if (thingContent !== thing.data.attributes.content) {
+                body.content = thingContent;
+            }
+
+            // if there is anything to update, send a request to the backend
+            if (Object.keys(body).length > 0) {
                 fetch(`https://remember-me-rails.herokuapp.com/things/${thing.data.id}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        content: newValue
-                    })
+                    body: JSON.stringify(body)
                 })
                     .then(response => response.json())
                     .then(data => {
                         // Update thing with the backend response
+                        thing.data.attributes.name = data.data.attributes.name;
                         thing.data.attributes.content = data.data.attributes.content;
                         thing.data.attributes.updated_at = data.data.attributes.updated_at;
                     })
                     .catch(console.log);
             }
         } else {
-            // create this thing & load it into the thing variable
+            // this is a new thing, create it
             fetch('https://remember-me-rails.herokuapp.com/things', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    name: document.querySelector('#thing-name').innerHTML,
-                    content: newValue
+                    name: thingName.innerHTML,
+                    content: thingContent
                 })
             })
                 .then(response => response.json())
                 .then(data => thing = data) // update thing with the backend response
                 .catch(console.log);
         }
-        
-    };
+    }
 
-    // Toggle the edit mode of the name of thing
-    const toggleName = () => {
-        const thingName = document.querySelector('#thing-name');
-        if (nameState === 'viewing') {
-            // set name as editable & focus it
-            nameState = 'editing';
-            thingName.contentEditable = true;
-            thingName.focus();
-        } else {
-            // set name as non-editable and save it to backend
-            nameState = 'viewing';
-            thingName.contentEditable = false;
-            if (thingName.innerHTML !== thing.data.attributes.name) {
-                saveName(thingName.innerHTML);
-            }
-        }
-    };
-
-    // Toggle the edit mode of thing
+    // Toggle the edit mode of thing, and save if necessary
     const toggleEdit = async () => {
         thing.edit = !thing.edit;
 
         easyMDE.togglePreview();
+
+        // if going from edit mode to view mode, save the content to backend
+        if (!thing.edit) {
+            saveThing();
+        }
+
     };
 
     // delete the current thing in the backend and set thing as null
@@ -219,6 +198,7 @@
     <!-- This textarea is actually the markdown editor. Variable easyMDE is taking control of this textarea -->
     <textarea id="thing-text-area"></textarea>
 
+    <!-- display last updated day/time -->
     {#if thing.data.attributes.updated_at}
         <p>Last updated at {thing.data.attributes.updated_at}</p>
     {/if}
