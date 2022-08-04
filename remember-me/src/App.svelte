@@ -127,7 +127,7 @@
 					<!-- Create thing button. Waits for things to load to show button -->
 					<div class='is-flex is-flex-direction-row is-flex-wrap-wrap mt-6'>
 						{#if things}
-							<span class="tag is-primary is-light is-medium is-clickable" on:click="{showNewThing}">Create new thing</span>
+							<span class="tag is-primary is-light is-large is-clickable" on:click="{showNewThing}">Create new thing</span>
 						{/if}
 					</div>
 				</div>
