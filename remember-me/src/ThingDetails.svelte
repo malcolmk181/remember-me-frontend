@@ -163,7 +163,12 @@
 
     // onMount, setup the markdown editor
     onMount(() => {
-        easyMDE = new EasyMDE({ previewImagesInEditor: true, spellChecker: false });
+        easyMDE = new EasyMDE({
+            previewImagesInEditor: true,
+            spellChecker: false,
+            hideIcons: ['preview', 'upload-image'] // hide the preview and image upload buttons
+        });
+
         easyMDE.value(thing.data.attributes.content);
         
         easyMDE.togglePreview();
