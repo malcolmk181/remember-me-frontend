@@ -112,6 +112,13 @@
         }
     };
 
+    // Toggle the edit mode of thing
+    const toggleEdit = async () => {
+        thing.edit = !thing.edit;
+
+        easyMDE.togglePreview();
+    };
+
     // delete the current thing in the backend and set thing as null
     const deleteThing = async () => {
         fetch(`https://remember-me-rails.herokuapp.com/things/${thing.data.id}`, {
@@ -179,6 +186,7 @@
     onMount(() => {
         easyMDE = new EasyMDE({ previewImagesInEditor: true, spellChecker: false });
         easyMDE.value(thing.data.attributes.content);
+        
         easyMDE.togglePreview();
     });
 
@@ -188,7 +196,7 @@
         easyMDE.value(thing.data.attributes.content);
 
         // make sure markdown editor is in preview mode when loading a new thing
-        if (!easyMDE.isPreviewActive()) {
+        if (!easyMDE.isPreviewActive() && !thing.edit) {
             easyMDE.togglePreview();
         }
 
@@ -203,18 +211,7 @@
     <nav class='level'>
         <div class='level-left'>
             <div class='level-item'>
-                <h1 class='title' id="thing-name" data-name='{thing.data.attributes.name}' contenteditable="false">{thing.data.attributes.name}</h1>
-            </div>
-        </div>
-        <div class='level-right'>
-            <div class='level-item'>
-                <button
-                    class='button'
-                    data-state='{nameState}'
-                    id='edit-thing-name'
-                    on:click|preventDefault="{toggleName}">
-                        {nameState === 'viewing' ? 'Edit name' : 'Save name'}
-                </button>
+                <h1 class='title {!!thing.edit ? "is-editable" : ""}' id="thing-name" data-name='{thing.data.attributes.name}' contenteditable="{!!thing.edit}">{thing.data.attributes.name}</h1>
             </div>
         </div>
     </nav>
@@ -240,9 +237,9 @@
                     </button>
                 </div>
             {/if}
-            <!-- save button -->
+            <!-- edit/save button -->
             <div class="level-item">
-                <button class='button' on:click|preventDefault="{saveContent}">Save content</button>
+                <button class='button' on:click|preventDefault="{toggleEdit}">{thing.edit ? "Save" : "Edit"}</button>
             </div>
             {#if thing.data.id}
             <!-- delete button -->
@@ -290,5 +287,9 @@
 
     .is-hidden {
         display: none;
+    }
+
+    .is-editable {
+        border: 1px solid #ccc;
     }
 </style>
