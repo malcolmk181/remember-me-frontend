@@ -14,12 +14,18 @@
 	// A stack to hold the previously viewed things.
 	let backStack = [];
 
+	// when things is updated, set favorites
+	const setFavorites = () => {
+		favorites = things.filter(thing => thing.attributes.is_favorite);
+	};
+
 	// load the things from the backend server
 	const getThings = async () => {
 		return fetch('https://remember-me-rails.herokuapp.com/things')
 			.then(response => response.json())
 			.then(data => {
 				things = data.data;
+				setFavorites();
 			});
 	};
 
@@ -81,9 +87,6 @@
 
 	// when thing is updated, reload the things list from the server
 	$: getThings(thing);
-
-	// when things is updated, set favorites
-	$: favorites = things.filter(thing => thing.attributes.is_favorite);
 
 	// get thing from the server on mount
 	onMount(getThings);
