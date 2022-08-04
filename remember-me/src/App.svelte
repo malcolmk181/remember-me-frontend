@@ -11,7 +11,7 @@
 	let thing;
 	let favorites;
 
-	// A stack to hold the previously viewed things.
+	// A stack to hold the ids of previously viewed things.
 	let backStack = [];
 
 	// when things is updated, set favorites
