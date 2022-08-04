@@ -124,7 +124,7 @@
             thing.included = [];
         }
 
-        thing.included.push(things.find(thing => thing.id === event.detail.id));
+        thing.included.push(things.find(thing => parseInt(thing.id) === parseInt(event.detail.id)));
         thing = thing;
     };
 
