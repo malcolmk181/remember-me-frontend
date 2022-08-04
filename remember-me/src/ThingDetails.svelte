@@ -171,7 +171,9 @@
 
         easyMDE.value(thing.data.attributes.content);
         
-        easyMDE.togglePreview();
+        if (!thing.edit) {
+            easyMDE.togglePreview();
+        }
     });
 
     // after update of ThingDetails, update the content of markdown editor and #thing-name h1
