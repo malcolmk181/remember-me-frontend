@@ -8,12 +8,17 @@
 
 	const dispatch = createEventDispatcher();
 
+    // when thing is updated, update the currentChildrenIds
     $: currentChildrenIds = thing.included ? thing.included.map(child => child.id) : [];
 
+    // when things is updated, update the selectableThings
     $: selectableThings = things.filter(candidate => {
+        // only allow things that are not the current thing and not already a child of the current thing
         return thing.data.id !== candidate.id && currentChildrenIds.includes(candidate.id) === false;
     });
 
+    // Creates a parent-child relationship between the current 'thing'
+    // and the child selected in the 'selectableThings' list.
     const saveChild = async () => {
         const childId = parseInt(document.querySelector('#child-select').value);
 
@@ -28,7 +33,8 @@
             })
         })
             .then(response => response.json())
-            .then(data => {
+            .then(() => {
+                // dispatch the done message to ThingDetails to update the UI
                 dispatch('done', {
                     id: childId
                 });
@@ -37,6 +43,8 @@
     };
 </script>
 
+<!-- The Bulma "level" places several items in a horizontal element. -->
+<!-- This level contains a select box for the possible children for this thing -->
 <div class='level mt-3'>
     <div class='level-left'>
         <div class='level-item'>
