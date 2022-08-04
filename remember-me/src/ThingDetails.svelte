@@ -207,7 +207,7 @@
 
     <!-- display last updated day/time -->
     {#if thing.data.attributes.updated_at}
-        <p>Last updated at {thing.data.attributes.updated_at}</p>
+        <p>Last updated at {Date(thing.data.attributes.updated_at).toLocaleString('en-US')}</p>
     {/if}
     
     <!-- favorite, edit/save, and delete buttons -->
